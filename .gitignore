@@ -1,0 +1,5 @@
+release
+debug
+CMakeCache.txt
+build_log.txt
+.vscode
