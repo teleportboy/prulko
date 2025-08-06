@@ -11,13 +11,17 @@
 #include "timer/cycle_timer.h"
 #include "frequency/ring_buffer.h"
 
-#include "../../prulko/prutypes.h"
-#include "../../prulko/harddepthlevel.h"
-#include "../../prulko/hardadclevel.h"
-#include "../../prulko/hardrpmlevel.h"
-#include "../../prulko/kobus_pru.h"
+#include "../../kobus/kobus9/firm/pru/prulko/prutypes.h"
 
-#include "../../prulko/hardfrequencylevel.h"
+#include "../../kobus/kobus9/firm/pru/prulko/prutypes.h"
+#include "../../kobus/kobus9/firm/pru/prulko/harddepthlevel.h"
+#include "../../kobus/kobus9/firm/pru/prulko/hardadclevel.h"
+#include "../../kobus/kobus9/firm/pru/prulko/hardrpmlevel.h"
+#include "../../kobus/kobus9/firm/pru/prulko/kobus_pru.h"
+
+// #include "../../kobus/kobus9/firm/pru/prulko/hardfrequencylevel.h"
+
+#include "../../kobus/kobus9/firm/pru/prulko/hardfrequencylevel.h"
 
 #define pruSharedDDRAddresKobusX           ((PruSharedData *) 0x80000000   )
 #define pruSharedOCRAMAddresKobusX         ((PruSharedData *) 0x00900000   )
@@ -47,13 +51,11 @@ void GPT2_IRQHandler(void)
 
 int main()
 {
-
-    //BOARD_RdcInit();
-    // BOARD_InitMemory();
-    //    BOARD_BootClockRUN();
+    BOARD_BootClockRUN();
+    BOARD_InitMemory();
+    BOARD_RdcInit();
     unsigned int counter = 0;
-    while (1)
-    {
+    while (1) {
         counter += 1;
         /* code */
     }

@@ -140,39 +140,121 @@ void BOARD_InitMemory(void)
     SCB_EnableDCache();
 }
 
+// void BOARD_RdcInit(void)
+// {
+
+    // RDC_Init(RDC);
+    // /* Move M7 core to specific RDC domain 1 */
+    // rdc_domain_assignment_t assignment = {0};
+    // uint8_t domainId                   = 0U;
+
+
+    // /* 1) Включаем тактирование модуля RDC */
+    // //CLOCK_EnableClock(kCLOCK_Rdc);
+
+    // /* 2) Инициализируем драйвер RDC */
+    // RDC_Init(RDC);
+
+
+
+    // // rdc_domain_assignment_t assignment = { .domainId = BOARD_DOMAIN_ID /* =1 */ };
+    // // RDC_SetMasterDomainAssignment(RDC, kRDC_Master_M7, &assignment);
+
+    // const rdc_periph_access_config_t uartCfg[] = {
+    //     { .periph = kRDC_Periph_UART1,
+    //       .policy = RDC_ACCESS_POLICY(0, kRDC_ReadWrite),
+    //       .enableSema = false, 
+    //       .lock = false 
+    //     },
+    //     { .periph = kRDC_Periph_UART2,
+    //       .policy = RDC_ACCESS_POLICY(0, kRDC_ReadWrite),
+    //       .enableSema = false, 
+    //       .lock = false 
+    //     },
+    //     { .periph = kRDC_Periph_UART3,
+    //       .policy = RDC_ACCESS_POLICY(0, kRDC_ReadWrite),
+    //       .enableSema = false, 
+    //       .lock = false 
+    //     },
+    //     { .periph = kRDC_Periph_UART4,
+    //       .policy = RDC_ACCESS_POLICY(0, kRDC_ReadWrite),
+    //       .enableSema = false, 
+    //       .lock = false 
+    //     },
+    // };
+
+    // for (int i = 0; i < 4; i++) {
+    //     RDC_SetPeriphAccessConfig(RDC, &uartCfg[i]);
+    // }
+
+
+    // domainId = RDC_GetCurrentMasterDomainId(RDC);
+    // /* Only configure the RDC if RDC peripheral write access allowed. */
+    // if ((0x1U & RDC_GetPeriphAccessPolicy(RDC, kRDC_Periph_RDC, domainId)) != 0U)
+    // {
+    //     assignment.domainId = BOARD_DOMAIN_ID;
+    //     RDC_SetMasterDomainAssignment(RDC, kRDC_Master_M7, &assignment);
+    // }
+
+//     /*
+//      * The M7 core is running at domain 1, now enable the clock gate of the following IP/BUS/PLL in domain 1 in the CCM.
+//      * In this way, to ensure the clock of the peripherals used by M core not be affected by A core which is running at
+//      * domain 0.
+//      */
+//     CLOCK_EnableClock(kCLOCK_Iomux);
+
+//     CLOCK_EnableClock(kCLOCK_Ipmux1);
+//     CLOCK_EnableClock(kCLOCK_Ipmux2);
+//     CLOCK_EnableClock(kCLOCK_Ipmux3);
+
+// #if defined(FLASH_TARGET)
+//     CLOCK_EnableClock(kCLOCK_Qspi);
+// #endif
+
+//     CLOCK_ControlGate(kCLOCK_SysPll1Gate, kCLOCK_ClockNeededAll);   /* Enable the CCGR gate for SysPLL1 in Domain 1 */
+//     CLOCK_ControlGate(kCLOCK_SysPll2Gate, kCLOCK_ClockNeededAll);   /* Enable the CCGR gate for SysPLL2 in Domain 1 */
+//     CLOCK_ControlGate(kCLOCK_SysPll3Gate, kCLOCK_ClockNeededAll);   /* Enable the CCGR gate for SysPLL3 in Domain 1 */
+//     CLOCK_ControlGate(kCLOCK_AudioPll1Gate, kCLOCK_ClockNeededAll); /* Enable the CCGR gate for AudioPLL1 in Domain 1 */
+//     CLOCK_ControlGate(kCLOCK_AudioPll2Gate, kCLOCK_ClockNeededAll); /* Enable the CCGR gate for AudioPLL2 in Domain 1 */
+//     CLOCK_ControlGate(kCLOCK_VideoPll1Gate, kCLOCK_ClockNeededAll); /* Enable the CCGR gate for VideoPLL1 in Domain 1 */
+
+
+//}
+
 void BOARD_RdcInit(void)
 {
-    /* Move M7 core to specific RDC domain 1 */
-    rdc_domain_assignment_t assignment = {0};
-    uint8_t domainId                   = 0U;
 
-    domainId = RDC_GetCurrentMasterDomainId(RDC);
+    RDC_Init(RDC);
+
+    rdc_domain_assignment_t assignment;
+    assignment.domainId = 1;    // Домeн 1 для Cortex-M7
+    assignment.lock     = false;
+    RDC_SetMasterDomainAssignment(RDC, kRDC_Master_M7, &assignment);
+
+    // rdc_domain_assignment_t assignment = {0};
+    // uint8_t domainId = RDC_GetCurrentMasterDomainId(RDC);
     /* Only configure the RDC if RDC peripheral write access allowed. */
-    if ((0x1U & RDC_GetPeriphAccessPolicy(RDC, kRDC_Periph_RDC, domainId)) != 0U)
-    {
-        assignment.domainId = BOARD_DOMAIN_ID;
-        RDC_SetMasterDomainAssignment(RDC, kRDC_Master_M7, &assignment);
+    // if ((0x1U & RDC_GetPeriphAccessPolicy(RDC, kRDC_Periph_RDC, domainId)) != 0U)
+    // {
+    //     assignment.domainId = BOARD_DOMAIN_ID;
+    //     RDC_SetMasterDomainAssignment(RDC, kRDC_Master_M7, &assignment);
+    // }
+
+    const rdc_periph_t uartPeripherals[] = {
+        kRDC_Periph_UART1,
+        kRDC_Periph_UART2,
+        kRDC_Periph_UART3,
+        //kRDC_Periph_UART4
+    }; 
+
+    rdc_periph_access_config_t periphConfig;
+    periphConfig.enableSema = false;
+    periphConfig.lock       = false;
+
+    for (size_t i = 0; i < sizeof(uartPeripherals)/sizeof(uartPeripherals[0]); ++i) {
+        periphConfig.periph = uartPeripherals[i];
+        //periphConfig.policy = RDC_ACCESS_POLICY(BOARD_DOMAIN_ID, kRDC_ReadWrite);
+        periphConfig.policy = RDC_ACCESS_POLICY(0, kRDC_NoAccess) | RDC_ACCESS_POLICY(BOARD_DOMAIN_ID, kRDC_ReadWrite);
+        RDC_SetPeriphAccessConfig(RDC, &periphConfig);
     }
-
-    /*
-     * The M7 core is running at domain 1, now enable the clock gate of the following IP/BUS/PLL in domain 1 in the CCM.
-     * In this way, to ensure the clock of the peripherals used by M core not be affected by A core which is running at
-     * domain 0.
-     */
-    CLOCK_EnableClock(kCLOCK_Iomux);
-
-    CLOCK_EnableClock(kCLOCK_Ipmux1);
-    CLOCK_EnableClock(kCLOCK_Ipmux2);
-    CLOCK_EnableClock(kCLOCK_Ipmux3);
-
-#if defined(FLASH_TARGET)
-    CLOCK_EnableClock(kCLOCK_Qspi);
-#endif
-
-    CLOCK_ControlGate(kCLOCK_SysPll1Gate, kCLOCK_ClockNeededAll);   /* Enable the CCGR gate for SysPLL1 in Domain 1 */
-    CLOCK_ControlGate(kCLOCK_SysPll2Gate, kCLOCK_ClockNeededAll);   /* Enable the CCGR gate for SysPLL2 in Domain 1 */
-    CLOCK_ControlGate(kCLOCK_SysPll3Gate, kCLOCK_ClockNeededAll);   /* Enable the CCGR gate for SysPLL3 in Domain 1 */
-    CLOCK_ControlGate(kCLOCK_AudioPll1Gate, kCLOCK_ClockNeededAll); /* Enable the CCGR gate for AudioPLL1 in Domain 1 */
-    CLOCK_ControlGate(kCLOCK_AudioPll2Gate, kCLOCK_ClockNeededAll); /* Enable the CCGR gate for AudioPLL2 in Domain 1 */
-    CLOCK_ControlGate(kCLOCK_VideoPll1Gate, kCLOCK_ClockNeededAll); /* Enable the CCGR gate for VideoPLL1 in Domain 1 */
 }

@@ -1,6 +1,6 @@
 #include "cycle_timer.h"
 #include "fsl_gpt.h"
-#include "../../prulko/hardfrequencylevel.h"
+#include "../../kobus/kobus9/firm/pru/prulko/hardfrequencylevel.h"
 
 //CLOCK = 800MHz
 //+SYSTEM_PLL1_DIV2  400MHz

@@ -2,7 +2,7 @@
 #define CYCLE_TIMER_H
 
 #include "stdint-gcc.h"
-#include "../../prulko/hardfrequencylevel.h"
+#include "../../kobus/kobus9/firm/pru/prulko/hardfrequencylevel.h"
 
 void start200MHzTimer();
 void initGPT2(void);
