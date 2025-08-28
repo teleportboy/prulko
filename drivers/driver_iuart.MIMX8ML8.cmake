@@ -6,7 +6,7 @@ message("${CMAKE_CURRENT_LIST_FILE} component is included.")
 if((CONFIG_DEVICE_ID STREQUAL MIMX8ML8xxxLZ OR CONFIG_DEVICE_ID STREQUAL MIMX8ML8xxxKZ))
 
 target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
-#${CMAKE_CURRENT_LIST_DIR}/fsl_uart.c
+${CMAKE_CURRENT_LIST_DIR}/fsl_uart.c
 )
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PUBLIC

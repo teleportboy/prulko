@@ -6,7 +6,7 @@ message("${CMAKE_CURRENT_LIST_FILE} component is included.")
 if(CONFIG_USE_driver_common AND CONFIG_USE_driver_iuart)
 
 target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
-#${CMAKE_CURRENT_LIST_DIR}/fsl_adapter_iuart.c
+${CMAKE_CURRENT_LIST_DIR}/fsl_adapter_iuart.c
 )
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PUBLIC

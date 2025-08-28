@@ -32,6 +32,8 @@ SET(LIBRARY_OUTPUT_PATH ${ProjDirPath}/${CMAKE_BUILD_TYPE})
 
 project(prulko_kobusx)
 
+option(BOARD_DEBIX "DEBIX Build!!" ON)
+
 set(MCUX_BUILD_TYPES debug release ddr_debug ddr_release flash_debug flash_release)
 
 set(MCUX_SDK_PROJECT_NAME prulko_kobusx.elf)
@@ -57,36 +59,44 @@ add_executable(${MCUX_SDK_PROJECT_NAME}
 "${ProjDirPath}/board/clock_config.c"
 "${ProjDirPath}/board/clock_config.h"
 "${ProjDirPath}/board/fsl_iomuxc.h"
-"${ProjDirPath}/board/pin_mux.c"
-"${ProjDirPath}/board/pin_mux.h"
 "${ProjDirPath}/remoteproc/empty_rsc_table.c"
 "${ProjDirPath}/source/main.c"
-"${ProjDirPath}/source/adc/ads8028.h"
-"${ProjDirPath}/source/adc/ads8028.c"
 "${ProjDirPath}/source/digitals/digitals.h"
-"${ProjDirPath}/source/digitals/digitals.c"
 "${ProjDirPath}/source/timer/cycle_timer.h"
 "${ProjDirPath}/source/timer/cycle_timer.c"
-"${ParentDirPath}/kobus/RotateSensor/RotatorV2/workspace/shared/PulseLink/bitcoding.c"
-"${ParentDirPath}/kobus/RotateSensor/RotatorV2/workspace/shared/PulseLink/bitcoding.h"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/hardadclevel.c"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/hardadclevel.h"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/harddepthlevel.c"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/harddepthlevel.h"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/hardrpmlevel.c"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/hardrpmlevel.h"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/hardfrequencylevel.c"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/hardfrequencylevel.h"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/kobus_pru.h"
-"${ParentDirPath}/kobus/kobus9/firm/pru/prulko/prutypes.h"
+"${ParentDirPath}/../../../RotateSensor/RotatorV2/workspace/shared/PulseLink/bitcoding.c"
+"${ParentDirPath}/../../../RotateSensor/RotatorV2/workspace/shared/PulseLink/bitcoding.h"
+"${ParentDirPath}/prulko/hardadclevel.c"
+"${ParentDirPath}/prulko/hardadclevel.h"
+"${ParentDirPath}/prulko/harddepthlevel.c"
+"${ParentDirPath}/prulko/harddepthlevel.h"
+"${ParentDirPath}/prulko/hardrpmlevel.c"
+"${ParentDirPath}/prulko/hardrpmlevel.h"
+"${ParentDirPath}/prulko/hardfrequencylevel.c"
+"${ParentDirPath}/prulko/hardfrequencylevel.h"
+"${ParentDirPath}/prulko/kobus_pru.h"
+"${ParentDirPath}/prulko/prutypes.h"
 "${ProjDirPath}/source/frequency/ring_buffer.h"
 "${ProjDirPath}/source/frequency/ring_buffer.c"
 )
 
-target_compile_definitions(${MCUX_SDK_PROJECT_NAME} PRIVATE
-    KOBUS_X
-    SDK_DEBUGCONSOLE=2
-)
+# target_compile_definitions(${MCUX_SDK_PROJECT_NAME} PRIVATE KOBUS_X)
+
+if(BOARD_DEBIX)
+    target_compile_definitions(${MCUX_SDK_PROJECT_NAME} PRIVATE BOARD_DEBIX)
+    target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
+        source/adc/debix/adc_debix.c
+        source/digitals/debix/digitals_debix.c
+        board/debix/pin_mux_debix.c
+    )
+else()
+    target_compile_definitions(${MCUX_SDK_PROJECT_NAME} PRIVATE BOARD_KOBUS)
+    target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
+        source/adc/kobus/adc_kobus.c
+        source/digitals/kobus/digitals_kobus.c
+        board/kobus/pin_mux_kobus.c
+    )
+endif()
 
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PRIVATE

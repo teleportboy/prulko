@@ -1,5 +1,5 @@
-#ifndef DIGITALS_H
-#define DIGITALS_H
+#ifndef DIGITALS_KOBUS_H
+#define DIGITALS_KOBUS_H
 
 #include "stdint-gcc.h"
 

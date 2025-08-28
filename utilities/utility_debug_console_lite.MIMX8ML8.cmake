@@ -7,7 +7,7 @@ if(CONFIG_USE_component_iuart_adapter AND (CONFIG_DEVICE_ID STREQUAL MIMX8ML8xxx
 
 target_sources(${MCUX_SDK_PROJECT_NAME} PRIVATE
 ${CMAKE_CURRENT_LIST_DIR}/fsl_str.c
-#${CMAKE_CURRENT_LIST_DIR}/fsl_debug_console.c
+${CMAKE_CURRENT_LIST_DIR}/fsl_debug_console.c
 )
 
 target_include_directories(${MCUX_SDK_PROJECT_NAME} PUBLIC
