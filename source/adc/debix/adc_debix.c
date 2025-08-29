@@ -14,11 +14,11 @@ void setupADC()
 {
     // SDK_DelayAtLeastUs(5U, SystemCoreClock); //wait for power on(на всякий случай)
     PruSharedData *mem = pruSharedOCRAMAddresKobusX;
-    mem->frequence.tickUsec = 1000;
-    CLOCK_SetRootMux(kCLOCK_I2c2, kCLOCK_I2cRootmuxOsc24M); //тут падает
-    mem->frequence.tickUsec = 2000;
-    CLOCK_SetRootDivider(kCLOCK_I2c2, 1U, 1U);
-    mem->frequence.tickUsec = 3000;
+    //mem->frequence.tickUsec = 1000;
+    CLOCK_SetRootMux(kCLOCK_RootI2c2, kCLOCK_I2cRootmuxOsc24M); //тут падает
+    //mem->frequence.tickUsec = 2000;
+    CLOCK_SetRootDivider(kCLOCK_RootI2c2, 1U, 1U);
+    //mem->frequence.tickUsec = 3000;
     CLOCK_EnableClock(kCLOCK_I2c2);
 
     i2c_master_config_t i2cConfig;
@@ -43,7 +43,7 @@ uint32_t createADCReadCommand(uint32_t channel)
 uint32_t readADCbyChannel(uint32_t ch)
 {
     PruSharedData *mem = pruSharedOCRAMAddresKobusX;
-    //mem->frequence.tickUsec += 1;
+    mem->frequence.tickUsec += 1;
     // 1) Выбрать канал (CHANNEL_SEL.MANUAL_CHID = ch)
     ads7128_write8(0x11u, (uint8_t)(ch & 0x0Fu));  // CHANNEL_SEL = 0x11 :contentReference[oaicite:7]{index=7}
 
@@ -81,7 +81,7 @@ int fillAdcIfNew(uint32_t *adcChannelValues)
 status_t ads7128_write8(uint8_t reg, uint8_t val) 
 {
     PruSharedData *mem = pruSharedOCRAMAddresKobusX;
-    mem->frequence.tickUsec = 500;
+    //mem->frequence.tickUsec = 500;
     i2c_master_transfer_t t = {0};
     t.slaveAddress   = ADS7128_I2C_ADDRESS;
     t.direction      = kI2C_Write;
@@ -91,6 +91,7 @@ status_t ads7128_write8(uint8_t reg, uint8_t val)
     t.dataSize       = 1;
     t.flags          = kI2C_TransferDefaultFlag;
     status_t res = I2C_MasterTransferBlocking(ADS7128_I2C, &t);
+    mem->frequence.tickUsec = 500;
     mem->frequence.tickUsec++;
     
     return res;
