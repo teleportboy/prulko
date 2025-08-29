@@ -28,6 +28,7 @@ INIT_RING_BUFFER_ARRAY(wavesPerInterval, 8, WAVES_PER_5000MS_SIZE);
 void doPruStep(RingBufferSet *ringSet)
 {
     PruSharedData *mem = pruSharedOCRAMAddresKobusX;
+    //mem->frequence.tickUsec = 1 + mem->frequence.tickUsec;
     doDepthStep(&mem->depth, &mem->debugDepth);
     doDigitalStep(&mem->digital);
     doCalculationsStep(&mem->digital);
@@ -38,10 +39,11 @@ void doPruStep(RingBufferSet *ringSet)
 void GPT2_IRQHandler(void)
 {
     PruSharedData *mem = pruSharedOCRAMAddresKobusX;
+    
     if (GPT_GetStatusFlags(GPT2, kGPT_OutputCompare1Flag)) {
         GPT_ClearStatusFlags(GPT2, kGPT_OutputCompare1Flag);
-        doAdcStep(&mem->adc);
     }
+    doAdcStep(&mem->adc);
 }
 
 int main()
@@ -56,21 +58,30 @@ int main()
 
     BOARD_InitBootPins();
     BOARD_BootClockRUN();
+    
+    mem->frequence.tickUsec = 0;
+
+    setupADC();
+    //mem->frequence.tickUsec = 2;
+    setupDigitalInputs();
+
+    //mem->frequence.tickUsec = 1;
 
     initGPT2();
     start200MHzTimer();
-    startLowFreqTimer(&mem->frequence);
+    //startLowFreqTimer(&mem->frequence);
+    
+    
+    // waveInitNodes(&ringSet);    
+    // cyclesInitNodes(&ringSet);
+    // wavesPerIntervalInitNodes(&ringSet);
 
-    setupADC();
-    setupDigitalInputs();
-
-    waveInitNodes(&ringSet);    
-    cyclesInitNodes(&ringSet);
-    wavesPerIntervalInitNodes(&ringSet);
-
+    //mem->frequence.tickUsec = 12345;
     while(1) {
         doPruStep(&ringSet);
     }
+
+    //mem->frequence.tickUsec = 123456;
 
     return 0;
 }
